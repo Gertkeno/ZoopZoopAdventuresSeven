@@ -73,6 +73,29 @@
       text-decoration: none;
       color: darkblue;
     }
+
+    .rainbow {
+      animation: colorRotate 3s linear 0s infinite;
+      color: black;
+    }
+
+    @keyframes colorRotate {
+      from {
+        background-color: #6666ff;
+      }
+      10% {
+        background-color: #0099ff;
+      }
+      50% {
+        background-color: #00ff00;
+      }
+      75% {
+        background-color: #ff3399;
+      }
+      100% {
+        background-color: #6666ff;
+      }
+    }
   </style>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -82,7 +105,7 @@
 <h1 class="beecolor">
   Zoop Zoop Bee Adventures 7
 </h1>
-<h2>
+<h2 class="rainbow">
   <a href="https://wasm4.org/play/zoopzoop">
     Click here to play Zoop Zoop Bee Adventures 7!!
   </a>
