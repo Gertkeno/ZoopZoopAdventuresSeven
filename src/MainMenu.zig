@@ -27,9 +27,9 @@ pub fn display(bees: u4, high_total: u32, high_score: u16) void {
     }
 
     w4.DRAW_COLORS.* = 0x02;
-    var scoreBuffer: [6]u8 = undefined;
     w4.text("High Scores", 37, 134);
 
+    var scoreBuffer: [6]u8 = undefined;
     const teaml = formatInt(&scoreBuffer, high_total, 10, .lower, .{});
     w4.text("Team: ", 1, 150);
     w4.text(scoreBuffer[0..teaml], 6 * 8, 150);

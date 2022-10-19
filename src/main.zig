@@ -1,6 +1,7 @@
 const std = @import("std");
 const w4 = @import("wasm4.zig");
 
+const Netplay = @import("Netplay.zig");
 const Sound = @import("Sound.zig");
 const Song = @import("Song.zig");
 const Controller = @import("Controller.zig");
@@ -100,9 +101,9 @@ fn total_pollins() u32 {
 }
 
 // any player pressed the x button
-fn any_pressed_x() bool {
+fn any_pressed(comptime input: []const u8) bool {
     for (zoops[0..active_zoops]) |zoop| {
-        if (zoop.controller.released.x) {
+        if (@field(zoop.controller.released, input)) {
             return true;
         }
     }
@@ -110,7 +111,8 @@ fn any_pressed_x() bool {
 }
 
 // set most of the game objects to starting state
-fn reset() void {
+fn reset_game() void {
+    in_main_menu = true;
     active_flowers = 4;
     zoops[0].x = 10;
     zoops[0].y = 10;
@@ -204,19 +206,14 @@ const dick_hit_sound = Sound{
 const hunny_bee = Song.compile_roll(
     \\E - E - E - . | D - E . G  E . . | D E - E - E - . | D - E - F E | - D . E - E - E - . D - | E . G E . . D | E - E - E - . D - | E - F E - D | .
 , 15);
-const drums_roll = Song.compile_roll(
-//\\C5 - - - - - - . | D5# - - - - - - . | D5 - - - - - - . | C5 - - - - - - . | B - - . B - - . | C5 - - . C5 - - . |
-    \\E - - D C - . C - A3 | . . C - . C D . E - D C - . C - A3 | C - C - . D . . . . .
-, 15);
 var song = Song.init(&hunny_bee, .Triangle, 0, 40);
-var drums = Song.init(&drums_roll, .Pulse2, 2, 15);
+var playing_music: bool = true;
 
 export fn update() void {
-    if (!song.update())
+    if (playing_music and !song.update())
         song.reset();
-    //if (!drums.update())
-    //drums.reset();
 
+    // add players if pressed anything!
     if (active_zoops < 4) {
         for (gamepads) |gamepad, n| {
             if (gamepad.* > 0) {
@@ -229,21 +226,33 @@ export fn update() void {
         zoop.controller.update(gamepads[n]);
     }
 
+    // main menu! shows high scores, active players, and toggles music
     if (in_main_menu) {
         MainMenu.display(active_zoops, high_score.team, high_score.solo);
-        if (any_pressed_x()) {
+        if (any_pressed("x")) {
             in_main_menu = false;
+        }
+        if (Netplay.enabled()) {
+            const local = zoops[Netplay.player()].controller;
+            if (local.released.right or local.released.left) {
+                playing_music = !playing_music;
+            }
+        } else {
+            if (any_pressed("right") or any_pressed("left")) {
+                playing_music = !playing_music;
+            }
         }
         return;
     }
+    // in-game code! //
 
     // Show pollin count
     for (zoops[0..active_zoops]) |*zoop, n| {
         zoop.show_score(10 + @intCast(i32, n) * 9);
     }
 
+    // move and draw zoops
     for (zoops[0..active_zoops]) |*zoop| {
-        // move and draw zoops
         zoop.update();
         if (dick.collides(zoop.*)) {
             if (!zoop.down) {
@@ -257,6 +266,7 @@ export fn update() void {
     // move and draw dick dastardly duck
     dick.update();
 
+    // potential game failure, players can still fall and collect pollins
     if (check_all_bees_down()) {
         w4.text("All down!", 80 - 32, 80);
 
@@ -267,9 +277,8 @@ export fn update() void {
 
         w4.text(totalString[0..len], 80 - @intCast(i32, len * 4), 89);
 
-        if (any_pressed_x()) {
-            in_main_menu = true;
-            reset();
+        if (any_pressed("x")) {
+            reset_game();
             return;
         }
     }
@@ -291,9 +300,10 @@ export fn update() void {
 
                     last_pollin_collect_frame = frame;
                     zoop.yurm_anim_time = frame;
+                    collect_pollin_sound.play();
+
                     f.withered = true;
                     zoop.pollin += 1;
-                    collect_pollin_sound.play();
                     high_score.solo = std.math.max(zoop.pollin, high_score.solo);
                     break;
                 }
