@@ -58,7 +58,7 @@ var dick = Dick{};
 
 // global random and time keeping (by frames)
 var prng = std.rand.DefaultPrng.init(7658); //
-export var rng: std.rand.Random = undefined;
+var rng: std.rand.Random = undefined;
 export var frame: u32 = 0;
 
 // give active flowers random positions and make them live!
@@ -264,7 +264,7 @@ export fn update() void {
     }
 
     // move and draw dick dastardly duck
-    dick.update();
+    dick.update(rng);
 
     // potential game failure, players can still fall and collect pollins
     if (check_all_bees_down()) {

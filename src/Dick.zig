@@ -7,15 +7,13 @@ const Self = @This();
 pub const width = 32;
 pub const height = 32;
 
-extern var rng: std.rand.Random;
-
 x: i32 = 56,
 y: i32 = 56,
 
 direction_x: i32 = 1,
 direction_y: i32 = 0,
 
-pub fn update(self: *Self) void {
+pub fn update(self: *Self, rng: std.rand.Random) void {
     // moving dick
     //// variables for direction !!!
     //// adding the direction to dick position !!!

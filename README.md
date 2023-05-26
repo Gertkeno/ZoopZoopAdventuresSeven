@@ -8,7 +8,7 @@ Made by: Garrett and June 💗
 
 ## Building
 
-Made with [Zig](https://ziglang.org) 0.9.1 for [Wasm4](https://wasm4.org)
+Made with [Zig](https://ziglang.org) 0.10.1 for [Wasm4](https://wasm4.org)
 
 To build and run, use these commands
 

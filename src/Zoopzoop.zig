@@ -6,17 +6,17 @@ const Song = @import("Song.zig");
 const Self = @This();
 
 const zoop_art_1bpp = [_]u16{
-    @byteSwap(u16, 0b11110010_11001001),
-    @byteSwap(u16, 0b11101101_01101011),
-    @byteSwap(u16, 0b11000000_00000000),
-    @byteSwap(u16, 0b11010010_01111110),
-    @byteSwap(u16, 0b11010010_01011010),
-    @byteSwap(u16, 0b00010010_01111110),
-    @byteSwap(u16, 0b00010010_01011010),
-    @byteSwap(u16, 0b11010010_01000010),
-    @byteSwap(u16, 0b11010010_01111110),
-    @byteSwap(u16, 0b11000000_00000000),
-    @byteSwap(u16, 0b11111001_11001111),
+    @byteSwap(0b11110010_11001001),
+    @byteSwap(0b11101101_01101011),
+    @byteSwap(0b11000000_00000000),
+    @byteSwap(0b11010010_01111110),
+    @byteSwap(0b11010010_01011010),
+    @byteSwap(0b00010010_01111110),
+    @byteSwap(0b00010010_01011010),
+    @byteSwap(0b11010010_01000010),
+    @byteSwap(0b11010010_01111110),
+    @byteSwap(0b11000000_00000000),
+    @byteSwap(0b11111001_11001111),
 };
 
 // coordinates (x, y)
