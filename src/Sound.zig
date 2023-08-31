@@ -27,18 +27,18 @@ channel: Channel = .Triangle,
 mode: u8 = 0,
 
 pub fn play(self: Self) void {
-    const freq = @bitCast(u32, self.freq);
-    const adsr = @bitCast(u32, self.adsr);
-    const flags = @enumToInt(self.channel) | self.mode;
+    const freq: u32 = @bitCast(self.freq);
+    const adsr: u32 = @bitCast(self.adsr);
+    const flags = @intFromEnum(self.channel) | self.mode;
 
     tone(freq, adsr, self.volume, flags);
 }
 
 pub fn play_channel(self: Self, channel: Channel) void {
-    const freq = @bitCast(u32, self.freq);
-    const adsr = @bitCast(u32, self.adsr);
+    const freq: u32 = @bitCast(self.freq);
+    const adsr: u32 = @bitCast(self.adsr);
 
-    tone(freq, adsr, self.volume, @enumToInt(channel));
+    tone(freq, adsr, self.volume, @intFromEnum(channel));
 }
 
 pub fn length(self: Self) u16 {

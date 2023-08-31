@@ -24,7 +24,7 @@ fn note_to_freq(note: String) u16 {
         if (n == '#') {
             index += 1;
         } else if (n >= '0' and n <= '9') {
-            octive = @truncate(u4, n - '0');
+            octive = @truncate(n - '0');
         }
     }
 
@@ -41,7 +41,7 @@ fn compile_roll_size(comptime input: String) usize {
     @setEvalBranchQuota(99999);
     var length: usize = 0;
 
-    var iterator = std.mem.tokenize(u8, input, &std.ascii.spaces);
+    var iterator = std.mem.tokenize(u8, input, &std.ascii.whitespace);
     var newSilence = false;
     while (iterator.next()) |obj| {
         const i = obj[0];
@@ -67,14 +67,14 @@ const Note = struct {
     pub fn play(self: @This(), channel: Channel, mode: u8, volume: ?u8) void {
         if (self.freq != 0) {
             const len = (self.len - release) | (release << 8);
-            w4.tone(self.freq, len, volume orelse 60, @enumToInt(channel) | (mode * 4));
+            w4.tone(self.freq, len, volume orelse 60, @intFromEnum(channel) | (mode * 4));
         }
     }
 };
 
 /// translating bpm to step (FPS / (bpm / 60))
 pub fn compile_roll(comptime input: String, step: usize) [compile_roll_size(input)]Note {
-    var iterator = std.mem.tokenize(u8, input, &std.ascii.spaces);
+    var iterator = std.mem.tokenize(u8, input, &std.ascii.whitespace);
     var length = compile_roll_size(input);
 
     var output: [length]Note = [1]Note{.{ .freq = 440, .len = 0 }} ** length;

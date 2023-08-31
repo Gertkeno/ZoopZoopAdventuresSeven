@@ -19,8 +19,8 @@ held: Gamepad = .{},
 released: Gamepad = .{},
 
 pub fn update(self: *Self, gamepad: *const u8) void {
-    self.previous = @bitCast(u8, self.held);
-    self.held = @bitCast(Gamepad, gamepad.*);
+    self.previous = @bitCast(self.held);
+    self.held = @bitCast(gamepad.*);
 
-    self.released = @bitCast(Gamepad, self.previous & gamepad.* ^ self.previous);
+    self.released = @bitCast(self.previous & gamepad.* ^ self.previous);
 }

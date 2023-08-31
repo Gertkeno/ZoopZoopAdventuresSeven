@@ -51,7 +51,7 @@ var high_score: packed struct {
     solo: u16 = 0,
 } = .{};
 const save_size = @sizeOf(@TypeOf(high_score));
-const save_ptr = @ptrCast([*]u8, &high_score);
+const save_ptr: [*]u8 = @ptrCast(&high_score);
 
 // dick dastardly duck
 var dick = Dick{};
@@ -126,7 +126,7 @@ fn reset_game() void {
     zoops[3].x = 134;
     zoops[3].y = 139;
 
-    for (zoops) |*zoop| {
+    for (&zoops) |*zoop| {
         zoop.down = false;
         zoop.pollin = 0;
         zoop.yurm_anim_time = 0;
@@ -153,7 +153,7 @@ const pallet = [4]u32{
 
 // only runs once at the start, setup first 4 flowers and colors.
 export fn start() void {
-    for (w4.PALETTE) |*p, n| {
+    for (w4.PALETTE, 0..) |*p, n| {
         p.* = pallet[n];
     }
 
@@ -215,14 +215,14 @@ export fn update() void {
 
     // add players if pressed anything!
     if (active_zoops < 4) {
-        for (gamepads) |gamepad, n| {
+        for (gamepads, 0..) |gamepad, n| {
             if (gamepad.* > 0) {
-                active_zoops = std.math.max(active_zoops, @intCast(u4, n + 1));
+                active_zoops = @max(active_zoops, @as(u4, @intCast(n + 1)));
             }
         }
     }
 
-    for (zoops[0..active_zoops]) |*zoop, n| {
+    for (zoops[0..active_zoops], 0..) |*zoop, n| {
         zoop.controller.update(gamepads[n]);
     }
 
@@ -247,8 +247,8 @@ export fn update() void {
     // in-game code! //
 
     // Show pollin count
-    for (zoops[0..active_zoops]) |*zoop, n| {
-        zoop.show_score(10 + @intCast(i32, n) * 9);
+    for (zoops[0..active_zoops], 0..) |*zoop, n| {
+        zoop.show_score(10 + @as(i32, @intCast(n)) * 9);
     }
 
     // move and draw zoops
@@ -271,11 +271,11 @@ export fn update() void {
         w4.text("All down!", 80 - 32, 80);
 
         const total = total_pollins();
-        high_score.team = std.math.max(total, high_score.team);
+        high_score.team = @max(total, high_score.team);
         var totalString: [10]u8 = "Total:    ".*;
         const len = std.fmt.formatIntBuf(totalString[6..], total, 10, .lower, .{}) + 6;
 
-        w4.text(totalString[0..len], 80 - @intCast(i32, len * 4), 89);
+        w4.text(totalString[0..len], 80 - @as(i32, @intCast(len * 4)), 89);
 
         if (any_pressed("x")) {
             reset_game();
@@ -304,7 +304,7 @@ export fn update() void {
 
                     f.withered = true;
                     zoop.pollin += 1;
-                    high_score.solo = std.math.max(zoop.pollin, high_score.solo);
+                    high_score.solo = @max(zoop.pollin, high_score.solo);
                     break;
                 }
             }
@@ -315,7 +315,7 @@ export fn update() void {
 
     // check flowers are withered, revives zoops
     if (check_all_flowers()) {
-        active_flowers = std.math.min(flowers.len, active_flowers + 1);
+        active_flowers = @min(flowers.len, active_flowers + 1);
         randomize_flowers();
         for (zoops[0..active_zoops]) |*zoop| {
             if (zoop.down) {

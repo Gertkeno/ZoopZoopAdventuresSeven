@@ -104,7 +104,7 @@ pub fn update(self: *Self) void {
 
     if (self.revive_anim_time + 15 > frame and self.revive_anim_time > 0) {
         w4.DRAW_COLORS.* = self.text_color;
-        const radius = @intCast(i32, (15 - (frame - self.revive_anim_time)) * 2);
+        const radius: i32 = @intCast((15 - (frame - self.revive_anim_time)) * 2);
         const mx = self.x + @divTrunc(self.width, 2) - radius;
         const my = self.y + @divTrunc(self.height, 2) - radius;
         w4.oval(mx, my, radius * 2, radius * 2);
