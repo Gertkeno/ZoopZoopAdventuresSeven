@@ -1,4 +1,4 @@
-const std = @import("std");
+tconst std = @import("std");
 const w4 = @import("wasm4.zig");
 
 const Netplay = @import("Netplay.zig");

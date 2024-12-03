@@ -75,7 +75,7 @@ const Note = struct {
 /// translating bpm to step (FPS / (bpm / 60))
 pub fn compile_roll(comptime input: String, step: usize) [compile_roll_size(input)]Note {
     var iterator = std.mem.tokenize(u8, input, &std.ascii.whitespace);
-    var length = compile_roll_size(input);
+    const length = compile_roll_size(input);
 
     var output: [length]Note = [1]Note{.{ .freq = 440, .len = 0 }} ** length;
     var oi: usize = 0;
