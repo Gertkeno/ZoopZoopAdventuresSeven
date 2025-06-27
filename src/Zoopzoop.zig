@@ -5,6 +5,7 @@ const Song = @import("Song.zig");
 
 const Self = @This();
 
+// legacy art :)
 const zoop_art_1bpp = [_]u16{
     @byteSwap(0b11110010_11001001),
     @byteSwap(0b11101101_01101011),
@@ -19,6 +20,9 @@ const zoop_art_1bpp = [_]u16{
     @byteSwap(0b11111001_11001111),
 };
 
+pub const width: i32 = 16;
+pub const height: i32 = 11;
+
 // coordinates (x, y)
 // maxmimum right 160, down 160
 // minimum left 0, up 0
@@ -26,15 +30,13 @@ const zoop_art_1bpp = [_]u16{
 x: i32,
 y: i32,
 
-width: i32 = 16,
-height: i32 = 11,
-
 text_color: u16,
 color: u16,
 yurm_anim_time: u32 = 0,
 revive_anim_time: u32 = 0,
 pollin: u16 = 0,
 down: bool = false,
+facing_left: bool = false,
 
 score_display: [12]u8 = "Pollin:     ".*,
 controller: Controller = .{},
@@ -49,8 +51,8 @@ pub fn update(self: *Self) void {
     if (self.down) {
         // bee falls down
         self.y += 1;
-        if (self.y >= 160 - self.height) {
-            self.y = 160 - self.height;
+        if (self.y >= 160 - height) {
+            self.y = 160 - height;
         } else {
             // zig zag falling
             self.x += if (frame & 0b1000 > 0) @as(i32, 1) else -1;
@@ -64,12 +66,14 @@ pub fn update(self: *Self) void {
 
         // left-right X axis
         if (self.controller.held.right) {
+            self.facing_left = false;
             self.x += speed;
-            if (self.x >= 160 - self.width) {
-                self.x = 157 - self.width;
+            if (self.x >= 160 - width) {
+                self.x = 157 - width;
             }
         }
         if (self.controller.held.left) {
+            self.facing_left = true;
             self.x -= speed;
             if (self.x <= 0) {
                 self.x = 3;
@@ -79,8 +83,8 @@ pub fn update(self: *Self) void {
         // up-down Y axis
         if (self.controller.held.up) {
             self.y += speed;
-            if (self.y >= 160 - self.height) {
-                self.y = 157 - self.height;
+            if (self.y >= 160 - height) {
+                self.y = 157 - height;
             }
         }
         if (self.controller.held.down) {
@@ -94,7 +98,8 @@ pub fn update(self: *Self) void {
     // draw the zoop
     w4.DRAW_COLORS.* = self.color;
     const flipped_dead = if (self.down) w4.BLIT_FLIP_Y else 0;
-    w4.blit(&zoop_art, self.x, self.y, self.width, self.height, w4.BLIT_2BPP | flipped_dead);
+    const flipped_left = if (self.facing_left) w4.BLIT_FLIP_X else 0;
+    w4.blit(&zoop_art, self.x, self.y, width, height, w4.BLIT_2BPP | flipped_dead | flipped_left);
 
     // show yurm text for at most 1/2 second, blinking at weird rate
     if (self.yurm_anim_time + 30 > frame and frame & 0b10100 > 0 and self.yurm_anim_time > 0) {
@@ -105,8 +110,8 @@ pub fn update(self: *Self) void {
     if (self.revive_anim_time + 15 > frame and self.revive_anim_time > 0) {
         w4.DRAW_COLORS.* = self.text_color;
         const radius: i32 = @intCast((15 - (frame - self.revive_anim_time)) * 2);
-        const mx = self.x + @divTrunc(self.width, 2) - radius;
-        const my = self.y + @divTrunc(self.height, 2) - radius;
+        const mx = self.x + @divTrunc(width, 2) - radius;
+        const my = self.y + @divTrunc(height, 2) - radius;
         w4.oval(mx, my, radius * 2, radius * 2);
     }
 }

@@ -13,7 +13,7 @@ y: i32 = 56,
 direction_x: i32 = 1,
 direction_y: i32 = 0,
 
-pub fn update(self: *Self, rng: std.rand.Random) void {
+pub fn update(self: *Self, rng: std.Random) void {
     // moving dick
     //// variables for direction !!!
     //// adding the direction to dick position !!!
@@ -54,18 +54,19 @@ pub fn update(self: *Self, rng: std.rand.Random) void {
 
     // draw
     w4.DRAW_COLORS.* = 0x4230;
-    w4.blit(&DICK_ART, self.x, self.y, width, height, w4.BLIT_2BPP);
+    const blit_flags = w4.BLIT_2BPP | (if (self.direction_x > 0) w4.BLIT_FLIP_X else 0);
+    w4.blit(&DICK_ART, self.x, self.y, width, height, blit_flags);
 }
 
 const niceness = 6;
 pub fn collides(self: Self, zoop: Zoop) bool {
-    if (zoop.x + zoop.width < self.x + niceness) {
+    if (zoop.x + Zoop.width < self.x + niceness) {
         return false;
     } else if (zoop.x > self.x + width - niceness) {
         return false;
     }
 
-    if (zoop.y + zoop.height < self.y + niceness) {
+    if (zoop.y + Zoop.height < self.y + niceness) {
         return false;
     } else if (zoop.y > self.y + height - niceness) {
         return false;

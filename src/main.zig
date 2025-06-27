@@ -1,4 +1,4 @@
-tconst std = @import("std");
+const std = @import("std");
 const w4 = @import("wasm4.zig");
 
 const Netplay = @import("Netplay.zig");
@@ -57,8 +57,8 @@ const save_ptr: [*]u8 = @ptrCast(&high_score);
 var dick = Dick{};
 
 // global random and time keeping (by frames)
-var prng = std.rand.DefaultPrng.init(7658); //
-var rng: std.rand.Random = undefined;
+var prng = std.Random.DefaultPrng.init(7658); //
+var rng: std.Random = undefined;
 export var frame: u32 = 0;
 
 // give active flowers random positions and make them live!

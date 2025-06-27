@@ -44,14 +44,14 @@ withered: bool = false,
 
 pub fn collides(flower: Self, zoop: Zoop) bool {
     // start X axis checks left -> right
-    if (zoop.x + zoop.width < flower.x) {
+    if (zoop.x + Zoop.width < flower.x) {
         return false;
     } else if (zoop.x > flower.x + width) {
         return false;
     }
 
     // start Y axis checks top -> bottom
-    if (zoop.y + zoop.height < flower.y) {
+    if (zoop.y + Zoop.height < flower.y) {
         return false;
     } else if (zoop.y > flower.y + height) {
         return false;
