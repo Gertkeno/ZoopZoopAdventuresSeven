@@ -98,8 +98,8 @@ pub fn update(self: *Self) void {
     // draw the zoop
     w4.DRAW_COLORS.* = self.color;
     const flipped_dead = if (self.down) w4.BLIT_FLIP_Y else 0;
-    const flipped_left = if (self.facing_left) w4.BLIT_FLIP_X else 0;
-    w4.blit(&zoop_art, self.x, self.y, width, height, w4.BLIT_2BPP | flipped_dead | flipped_left);
+    //const flipped_left = if (self.facing_left) w4.BLIT_FLIP_X else 0;
+    w4.blit(&zoop_art, self.x, self.y, width, height, w4.BLIT_2BPP | flipped_dead);
 
     // show yurm text for at most 1/2 second, blinking at weird rate
     if (self.yurm_anim_time + 30 > frame and frame & 0b10100 > 0 and self.yurm_anim_time > 0) {
